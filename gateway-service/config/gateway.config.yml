@@ -1,0 +1,39 @@
+http:
+  port: 8081
+
+apiEndpoints:
+  user:
+    host: localhost
+    paths: "/users/*"
+  links:
+    host: localhost
+    paths: "/links/*"
+  analytics:
+    host: localhost
+    paths: "/analytics/*"
+
+serviceEndpoints:
+  userService:
+    url: http://localhost:3001
+  linkService:
+    url: http://localhost:3002
+  analyticsService:
+    url: http://localhost:3003
+
+policies:
+  - basic-auth
+
+pipelines:
+  default:
+    apiEndpoints:
+      - user
+      - links
+      - analytics
+    policies:
+      - basic-auth:
+          - action:
+              users:
+                admin: adminpassword
+    proxy:
+      - action:
+          serviceEndpoint: ${req.apiEndpoint.name}Service
